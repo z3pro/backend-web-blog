@@ -13,7 +13,8 @@ import com.spring.security.CustomUserDetails;
 @Component
 public class UserInfoService implements UserDetailsService {
 	@Autowired
-	private  UserRepository userRepository;
+	private UserRepository userRepository;
+
 	@Override // Phương thức này lấy user từ database thông qua username sau đó map qua
 				// userdetails và trả về userdetails
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -23,6 +24,5 @@ public class UserInfoService implements UserDetailsService {
 		}
 		return CustomUserDetails.mapUserToCustomUserDetails(userEntity);
 	}
-
 
 }
