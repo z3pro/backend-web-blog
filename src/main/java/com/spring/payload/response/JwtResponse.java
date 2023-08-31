@@ -1,31 +1,43 @@
 package com.spring.payload.response;
 
-import java.util.List;
+import com.spring.dto.CustomUserDetailDTO;
+import com.spring.security.CustomUserDetails;
 
 public class JwtResponse {
-	private String token;
+	private String access_token;
+	private String refresh_token;
 	private String type = "Bearer";
-	private String userName;
-	private String email;
-	private String phone;
-	private List<String> listRoles;
+	private CustomUserDetailDTO user;
 
-	public JwtResponse(String token, String userName, String email, String phone, List<String> listRoles) {
-		this.token = token;
-		this.userName = userName;
-		this.email = email;
-		this.phone = phone;
-		this.listRoles = listRoles;
+	public CustomUserDetailDTO getUser() {
+		return user;
 	}
 
-	public String getToken() {
-		return token;
+	public void setUser(CustomUserDetailDTO user) {
+		this.user = user;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
+	public JwtResponse(String access_token, String refresh_token, CustomUserDetailDTO user) {
+		this.access_token = access_token;
+		this.refresh_token = refresh_token;
+		this.user = user;
 	}
 
+	public String getAccess_token() {
+		return access_token;
+	}
+
+	public void setAccess_token(String access_token) {
+		this.access_token = access_token;
+	}
+
+	public String getRefresh_token() {
+		return refresh_token;
+	}
+
+	public void setRefresh_token(String refresh_token) {
+		this.refresh_token = refresh_token;
+	}
 	public String getType() {
 		return type;
 	}
@@ -34,35 +46,5 @@ public class JwtResponse {
 		this.type = type;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public List<String> getListRoles() {
-		return listRoles;
-	}
-
-	public void setListRoles(List<String> listRoles) {
-		this.listRoles = listRoles;
-	}
 }

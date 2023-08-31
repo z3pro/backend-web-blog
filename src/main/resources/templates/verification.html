@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
+    <title>Verification-Code</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 24px;
+            margin: 10px 0 20px;
+        }
+
+        .form-verification {
+            min-width: 300px;
+            max-width: 100%;
+            margin: 10px;
+            min-height: 200px;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification {
+            max-width: 300px;
+            margin: 20px 0;
+            background-color: rgba(247, 107, 79, 0.873);
+            border-radius: 5px;
+            font-size: 14px;
+            color: rgba(75, 100, 81, 1);
+            padding: 10px;
+        }
+
+        .verification-code {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .verification-code input[type="text"] {
+            margin: 10px;
+            padding: 10px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            border: none;
+            background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+            border-radius: 9999px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: 1s ease all;
+        }
+
+        .btn-submit:hover {
+            background-image: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%);
+            color: rgb(68, 191, 31);
+        }
+
+        .btn-submit:active {
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-verification">
+        <h3 class="title">Xác thực mã OTP</h3>
+        <h4>Mã xác thực được gửi qua Email:</h4>
+        <h4 th:text="${email}" class="email"></h4>
+        <div class="notification">Vui lòng kiểm tra tin nhắn được gửi tới email,hãy kiểm tra cả mục spam nếu thư mục tin
+            nhắn không có!</div>
+        <h4>Nhập mã OTP</h4>
+        <div class="verification-code">
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+            <input type="text" maxlength="1" pattern="[0-9]" required>
+        </div>
+        <div> Bạn chưa nhận được mã ? <a href="">Gửi lại OTP</a> </div>
+        <button class="btn-submit" onclick="handleSubmit()">Xác Nhận</button>
+    </div>
+    <script>
+        "use strict"
+        const verification = document.querySelector(".verification-code");
+        const listInput = verification.getElementsByTagName("input");
+        verification.onclick = () => {
+            Array.from(listInput).every(item => {
+
+                if (item.value == "") {
+                    item.focus();
+                    return false;
+                }
+                return true;
+            })
+        }
+        Array.from(listInput).forEach((item, index) => {
+            item.oninput = () => {
+
+                if (index == 0) {
+                    if (item.value != "") {
+                        listInput[1].focus();
+                    }
+                } else if (index == listInput.length) {
+                    if (item.value == "") {
+                        console.log(listInput.length);
+                        listInput[index - 1].focus();
+                    } else {
+                        item.blur();
+                    }
+                } else {
+                    if (item.value == "") {
+                        listInput[index - 1].focus();
+                    } else if (index != 0 && index < listInput.length - 1) {
+                        listInput[index + 1].focus();
+                    } else {
+                        item.blur();
+                    }
+                }
+            }
+            item.onkeydown = (e) => {
+                if (e.keyCode == 8) {
+                    if (item.value == "" && index != 0) {
+                        listInput[index - 1].focus();
+                    } else if (item.value != "" && index != 0) {
+                        item.value == "";
+                    }
+                }
+            }
+        })
+        function handleSubmit() {
+            let otp = "";
+            Array.from(verification.getElementsByTagName("input")).forEach(element => {
+                otp += element.value
+            });;
+            if (otp.length === 6) {
+                let email = document.querySelector(".email").innerText;
+                let data = { email, otp };
+                const option = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }
+                fetch("/verification/active", option)
+                    .then(res => {
+                       return res.json();
+                    })
+                    .then(data=>{
+                        window.location.href = data.message;
+                    })
+
+                    .catch(error => {
+                        console.log(error);
+                    })
+
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -5,13 +5,14 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.spring.entity.UserEntity;
 import com.spring.entity.VerificationEntity;
@@ -29,43 +30,67 @@ public class VerificationController {
 
   @RequestMapping(value = "/verification", method = { RequestMethod.GET, RequestMethod.POST })
   public String redirectVerification(Model model, @RequestBody(required = false) Map<String, Object> data) {
-    if (data == null) {
-      // return "error-404";
-      model.addAttribute("email", "tiendat.dev203@gmail.com");
+    try {
 
-    } else {
-      System.out.println(data.get("email"));
-      String emailUser = (String) data.get("email");
-      model.addAttribute("email", emailUser);
+      if (data == null) {
+         return "error-404";
+
+      } else {
+        String emailUser = (String) data.get("email");
+        model.addAttribute("email", emailUser);
+      }
+      return "verification";
+    } catch (Exception e) {
+      return "error-404";
     }
-    return "verification";
   }
 
   @RequestMapping(value = "/verification/active", method = { RequestMethod.GET, RequestMethod.POST })
   public ResponseEntity<?> activeUser(@RequestBody(required = false) ActiveUser activeUser) {
-    if (activeUser != null) {
-      String email = activeUser.getEmail();
-      String otp = activeUser.getOtp();
-      UserEntity user = userService.findByEmail(email);
-      VerificationEntity verification = verificationService.findByUser(user);
-      Date verificationTime = verification.getExpiryDate();
-      Calendar cal = Calendar.getInstance();
-      cal.setTimeInMillis(new Date().getTime());
-      Date time = new Date(cal.getTime().getTime());
-      if (verificationTime.compareTo(time) >= 0) {
-        if (verification.getVerificationToken() == otp) {
-          user.setEnabled(true);
-          userService.saveOrUpdate(user);
-          return ResponseEntity.ok(new MessageResponse("https://www.google.com.vn/?hl=vi"));
+    try {
+
+      if (activeUser != null) {
+        String email = activeUser.getEmail();
+        String otp = activeUser.getOtp();
+        UserEntity user = userService.findByEmail(email);
+        VerificationEntity verification = verificationService.findByUser(user);
+        Date verificationTime = verification.getExpiryDate();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(new Date().getTime());
+        Date time = new Date(cal.getTime().getTime());
+        if (verificationTime.compareTo(time) != -1) {
+          if (verification.getVerificationToken().equals(otp)) {
+            user.setEnabled(true);
+            userService.saveOrUpdate(user);
+            verificationService.deleteVerification(verification);
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponse(("https://hoathinh3d.pro/xem-phim-tinh-than-bien-phan-5/tap-21-sv1.html")));
+          } else {
+            RedirectView redirect = new RedirectView();
+            redirect.setUrl("/error-404");
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponse(redirect.getUrl()));
+          }
+        } else {
+         RedirectView redirect = new RedirectView();
+            redirect.setUrl("/error-404");
+            return ResponseEntity.status(HttpStatus.OK)
+                .body(new MessageResponse(redirect.getUrl()));
         }
+      } else {
+        return ResponseEntity.ok(new MessageResponse("https://www.google.com.vn/?hl=vi"));
       }
-      ;
+    } catch (Exception e) {
+      System.out.println("error");
+      RedirectView redirect = new RedirectView();
+      redirect.setUrl("/error-404");
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(new MessageResponse(redirect.getUrl()));
     }
-    return ResponseEntity.ok(new MessageResponse("https://www.google.com.vn/?hl=vi"));
   }
 
-  @GetMapping("/test")
-  public String test() {
-    return "redirect:/verification";
+  @RequestMapping(value = "/error-404", method = { RequestMethod.GET, RequestMethod.POST })
+  public String error404() {
+    return "error-404";
   }
 }

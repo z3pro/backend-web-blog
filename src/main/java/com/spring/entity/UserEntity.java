@@ -40,6 +40,8 @@ public class UserEntity extends BaseEntity {
 	private String phone;
 	@Column(name = "user_status")
 	private boolean userStatus;
+	@Column(name = "enabled")
+	private boolean enabled;
 	@Column(name = "birth_date")
 	private Date birthDate;
 	@Column(name = "img_user")
@@ -47,7 +49,7 @@ public class UserEntity extends BaseEntity {
 	@Column(name = "gender")
 	private String gender;
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "user_roles",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Roles> listRoles = new HashSet<>();
 	@ManyToMany
 	@JoinTable(name = "aticles_like", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "aticles_id"))
@@ -56,9 +58,10 @@ public class UserEntity extends BaseEntity {
 	@JoinTable(name = "blog_like", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "blog_id"))
 	private Set<BlogEntity> likedBlog = new HashSet<BlogEntity>();
 	@OneToMany(mappedBy = "authId")
-	private Set<BlogEntity> listBlog ;
-	public void removeLikedAticles (AticlesEntity aticlesEntity) {
+	private Set<BlogEntity> listBlog;
+
+	public void removeLikedAticles(AticlesEntity aticlesEntity) {
 		this.likedAticles.remove(aticlesEntity);
 	}
-	
+
 }

@@ -23,11 +23,12 @@ import com.spring.service.impl.BlogService;
 public class BlogController {
 	@Autowired
 	private BlogService blogService;
-	
+
 	@GetMapping(value = "")
 	public List<BlogDTO> showBlog() {
 		return blogService.findAll();
 	}
+
 	@GetMapping("get-id/{id}")
 	public ResponseEntity<?> getBlog(@PathVariable Long id) {
 		BlogDTO result = blogService.findById(id);
@@ -57,7 +58,6 @@ public class BlogController {
 		return blogService.removeUserLikeToBlog(blogId, userId);
 	}
 
-	
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
 		blogService.delete(id);

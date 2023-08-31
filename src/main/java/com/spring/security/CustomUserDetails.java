@@ -8,13 +8,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.modelmapper.internal.bytebuddy.asm.Advice.Return;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 import com.spring.entity.AticlesEntity;
 import com.spring.entity.BlogEntity;
 import com.spring.entity.UserEntity;
@@ -22,9 +20,9 @@ import com.spring.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@SuppressWarnings("serial")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 	private UUID userId;
 	private String username;
@@ -32,12 +30,13 @@ public class CustomUserDetails implements UserDetails {
 	private String address;
 	private String email;
 	private String phone;
-	private boolean userStatus = true;
+	private boolean userStatus;
+	private boolean enabled = true;
 	private Date birthDate;
 	private String img;
 	private String gender;
-	private Set<AticlesEntity> likedAticles = new HashSet<>();
-	private Set<BlogEntity> listBlog = new HashSet<>();
+	//private Set<AticlesEntity> likedAticles = new HashSet<>();
+	//private Set<BlogEntity> listBlog = new HashSet<>();
 	private Collection<? extends GrantedAuthority> authorities;
 
 	@Override
@@ -50,23 +49,23 @@ public class CustomUserDetails implements UserDetails {
 		// autorities
 		List<GrantedAuthority> listAuthorities = user.getListRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getRole().name())).collect(Collectors.toList());
-		CustomUserDetails result = new CustomUserDetails(user.getUserId(), user.getPassword(), user.getUserName(),
-				user.getAddress(), user.getEmail(), user.getPhone(), user.isUserStatus(), user.getBirthDate(),
-				user.getImg(), user.getGender(), user.getLikedAticles(), user.getListBlog(), listAuthorities);
-		return result;
+		return new CustomUserDetails(user.getUserId(), user.getUserName(), user.getPassword(),
+				user.getAddress(), user.getEmail(), user.getPhone(), user.isUserStatus(), user.isEnabled(),
+				user.getBirthDate(),
+				user.getImg(), user.getGender(), listAuthorities);
+		// user.getLikedAticles(), user.getListBlog(),
 
 	}
 
 	@Override
 	public String getPassword() {
-
-		return this.username;
+		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return this.password;
+		return this.username;
 	}
 
 	@Override
@@ -90,7 +89,7 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return true;
+		return this.enabled;
 	}
 
 }

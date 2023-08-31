@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.spring.entity.Roles;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,5 +21,5 @@ public class UserDTO extends AbstractDTO {
 	private String gender;
 	private String email;
 	private String phone;
-	private Set<Roles> roles;
+	private Set<Roles> listRoles;
 }

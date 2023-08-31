@@ -5,6 +5,7 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,17 +30,17 @@ public class BlogEntity extends BaseEntity {
 	private String slug;
 	@Column(name = "title")
 	private String title;
-	@Column(name = "content",length = 65535,columnDefinition = "Text")
+	@Column(name = "content", length = 65535, columnDefinition = "Text")
 	private String content;
 	@Column(name = "img_url")
 	private String img;
 	@ManyToMany
 	@JoinTable(name = "blog_like", joinColumns = @JoinColumn(name = "blog_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<UserEntity> userLike = new HashSet<>();
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "auth_id")
 	private UserEntity authId;
-	
+
 	public void addUserLike(UserEntity user) {
 		this.userLike.add(user);
 	}

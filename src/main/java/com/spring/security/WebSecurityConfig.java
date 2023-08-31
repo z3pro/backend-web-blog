@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.spring.jwt.JwtAuthenticationFilter;
 import com.spring.service.impl.UserInfoService;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -33,26 +34,31 @@ public class WebSecurityConfig {
 	public UserDetailsService userDetailsService() {
 		return new UserInfoService();
 	}
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**","/aticles","/aticles/get-id/**","/category","/category/get-id/**","/blog/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-//		return http.csrf().disable().authorizeHttpRequests().requestMatchers("/auth/**").permitAll().and()
-//				.authorizeHttpRequests().anyRequest().authenticated().and().sessionManagement()
-//				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//				.authenticationProvider(authenticationProvider())
-//				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class).build();
+				//.cors(AbstractHttpConfigurer::disable)
+				.cors(cors-> {
+					cors.configurationSource(request -> {
+						CorsConfiguration config = new CorsConfiguration();
+						config.addAllowedOrigin("http://localhost:3000");
+						config.addAllowedMethod("*");
+						config.addAllowedHeader("*");
+						return config;
+					});
+				})
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/auth/**", "/aticles", "/aticles/get-id/**", "/category",
+								"/category/get-id/**", "/blog/**", "/verification", "/verification/active",
+								"/google-drive/**", "error-404")
+						.permitAll()
+						.anyRequest()
+						.authenticated())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(authenticationProvider())
+				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
 	}
 
 	@Bean

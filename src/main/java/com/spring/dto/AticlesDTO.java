@@ -2,8 +2,6 @@ package com.spring.dto;
 
 import java.util.Set;
 
-import com.spring.entity.CategoryEntity;
-
 import lombok.Getter;
 import lombok.Setter;
 

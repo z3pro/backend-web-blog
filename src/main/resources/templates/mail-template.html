@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+        }
+    </style>
+</head>
+
+<body>
+    <p th:text="${'Xin chào, ' + username}"></p>
+    <p> Chúng tôi gửi mã kích hoạt tài khoản của bạn: </p>
+    <p th:text="${'- Mã kích hoạt của bạn là : ' + verification}"></p>
+    <p>Lưu ý: Đây là mã kích hoạt mặc định được tạo bởi hệ thống và chỉ có giá trị trong vòng 24h!</p>
+    <p>Bạn vui lòng đổi lại để đảm bảo an toàn thông tin. </p>
+    <p>Đây là email tự động vui lòng không trả lời.</p>
+</body>
+
+</html>

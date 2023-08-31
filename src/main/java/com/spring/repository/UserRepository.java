@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.spring.entity.UserEntity;
+import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 	UserEntity findByUserName(String userName);
@@ -13,5 +14,5 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
 	boolean existsByEmail(String email);
 
-	Object findByEmail(String username);
+	UserEntity findByEmail(String username);
 }
